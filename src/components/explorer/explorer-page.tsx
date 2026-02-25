@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import AuthGuard from "@/components/layout/auth-guard";
@@ -11,6 +11,11 @@ import { RuleBuilder } from "./rule-builder";
 import { ActivityResults } from "./activity-results";
 import { CollectionsPanel } from "./collections-panel";
 import { AnalyticsPanel } from "./analytics-panel";
+import {
+  TimeframeFilter,
+  filterActivitiesByTimeframe,
+  type TimeframeFilterValue,
+} from "./timeframe-filter";
 
 function ExplorerContent() {
   const { did } = useAuth();
@@ -18,8 +23,18 @@ function ExplorerContent() {
   const { activities, isLoading: activitiesLoading } = useActivities();
   const [expression, setExpression] = useState("");
   const [analyticsOpen, setAnalyticsOpen] = useState(true);
+  const [timeframe, setTimeframe] = useState<TimeframeFilterValue>({
+    from: "",
+    to: "",
+  });
 
   const isLoading = tagsLoading || activitiesLoading;
+
+  // Apply timeframe filter before CEL matching
+  const filteredActivities = useMemo(
+    () => filterActivitiesByTimeframe(activities, timeframe),
+    [activities, timeframe],
+  );
 
   if (!did) return null;
 
@@ -56,6 +71,16 @@ function ExplorerContent() {
           </div>
         ) : (
           <>
+            {/* Timeframe filter */}
+            <div className="mb-6">
+              <TimeframeFilter
+                value={timeframe}
+                onChange={setTimeframe}
+                totalCount={activities.length}
+                filteredCount={filteredActivities.length}
+              />
+            </div>
+
             {/* Rule builder + results + collections */}
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               <RuleBuilder
@@ -64,12 +89,12 @@ function ExplorerContent() {
                 onExpressionChange={setExpression}
               />
               <ActivityResults
-                activities={activities}
+                activities={filteredActivities}
                 expression={expression}
                 availableTags={tags}
               />
               <CollectionsPanel
-                activities={activities}
+                activities={filteredActivities}
                 availableTags={tags}
                 activeExpression={expression}
                 onSelectCollection={setExpression}
@@ -93,7 +118,10 @@ function ExplorerContent() {
                 </h2>
               </button>
               {analyticsOpen && (
-                <AnalyticsPanel activities={activities} availableTags={tags} />
+                <AnalyticsPanel
+                  activities={filteredActivities}
+                  availableTags={tags}
+                />
               )}
             </div>
           </>
