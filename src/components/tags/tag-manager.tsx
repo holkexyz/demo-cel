@@ -6,10 +6,14 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { useWorkScopeTags } from "@/hooks/use-work-scope-tags";
 import {
   createWorkScopeTag,
+  updateWorkScopeTag,
   deleteWorkScopeTag,
   seedWorkScopeTags,
 } from "@/lib/atproto/work-scope-tags";
-import type { WorkScopeTagRecord } from "@/lib/atproto/work-scope-types";
+import type {
+  WorkScopeTagRecord,
+  WorkScopeTagListItem,
+} from "@/lib/atproto/work-scope-types";
 import TagList from "./tag-list";
 import TagFormModal from "./tag-form-modal";
 
@@ -17,6 +21,9 @@ const TagManager: React.FC = () => {
   const { agent, did, isLoading: authLoading, openSignIn } = useAuth();
   const { tags, isLoading, refetch } = useWorkScopeTags();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingTag, setEditingTag] = useState<WorkScopeTagListItem | undefined>(
+    undefined,
+  );
   const [isSeeding, setIsSeeding] = useState(false);
   const [seedError, setSeedError] = useState<string | null>(null);
 
@@ -58,7 +65,7 @@ const TagManager: React.FC = () => {
       refetch();
     } catch (err) {
       setSeedError(
-        err instanceof Error ? err.message : "Failed to seed tags"
+        err instanceof Error ? err.message : "Failed to seed tags",
       );
     } finally {
       setIsSeeding(false);
@@ -66,9 +73,22 @@ const TagManager: React.FC = () => {
   };
 
   const handleCreate = async (
-    tag: Omit<WorkScopeTagRecord, "$type" | "createdAt">
+    tag: Omit<WorkScopeTagRecord, "$type" | "createdAt">,
   ) => {
     await createWorkScopeTag(agent, did, tag);
+    refetch();
+  };
+
+  const handleUpdate = async (
+    tag: Omit<WorkScopeTagRecord, "$type" | "createdAt">,
+  ) => {
+    if (!editingTag) return;
+    // For update, we need to include createdAt from the original record
+    const fullRecord: Omit<WorkScopeTagRecord, "$type"> = {
+      ...tag,
+      createdAt: editingTag.value.createdAt,
+    };
+    await updateWorkScopeTag(agent, did, editingTag.rkey, fullRecord);
     refetch();
   };
 
@@ -79,6 +99,21 @@ const TagManager: React.FC = () => {
     } catch (err) {
       console.error("Failed to delete tag:", err);
     }
+  };
+
+  const handleEdit = (tag: WorkScopeTagListItem) => {
+    setEditingTag(tag);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenCreate = () => {
+    setEditingTag(undefined);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingTag(undefined);
   };
 
   const existingKeys = tags.map((t) => t.value.key);
@@ -105,7 +140,7 @@ const TagManager: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={() => setIsModalOpen(true)}
+              onClick={handleOpenCreate}
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-mono text-accent bg-accent/10 border border-accent/20 rounded hover:bg-accent/15 hover:border-accent/35 transition-colors duration-150"
             >
               <Plus className="w-4 h-4" />
@@ -120,13 +155,20 @@ const TagManager: React.FC = () => {
           </div>
         )}
 
-        <TagList tags={tags} onDelete={handleDelete} isLoading={isLoading} />
+        <TagList
+          tags={tags}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+          isLoading={isLoading}
+        />
 
         <TagFormModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSubmit={handleCreate}
+          onClose={handleCloseModal}
+          onSubmit={editingTag ? handleUpdate : handleCreate}
           existingKeys={existingKeys}
+          existingTags={tags}
+          editingTag={editingTag}
         />
       </div>
     </div>

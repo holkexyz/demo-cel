@@ -134,9 +134,9 @@ export function ActivityResults({
                     </div>
                   </div>
 
-                  {activity.value.description && (
+                  {(activity.value.shortDescription || activity.value.description) && (
                     <p className="text-sm text-[var(--color-dark-gray)] line-clamp-2 mb-2">
-                      {activity.value.description}
+                      {activity.value.shortDescription || activity.value.description}
                     </p>
                   )}
 

@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useActivities } from "@/hooks/use-activities";
@@ -25,9 +26,14 @@ const SkeletonCard: React.FC = () => (
 );
 
 const ActivityListPageInner: React.FC = () => {
+  const router = useRouter();
   const { agent, did } = useAuth();
   const { activities, isLoading, refetch } = useActivities();
   const { tags } = useWorkScopeTags();
+
+  const handleEdit = (rkey: string) => {
+    router.push(`/certs/new?edit=${rkey}`);
+  };
 
   const handleDelete = async (rkey: string) => {
     if (!agent || !did) return;
@@ -86,6 +92,7 @@ const ActivityListPageInner: React.FC = () => {
                 activity={activity}
                 availableTags={tags}
                 onDelete={handleDelete}
+                onEdit={handleEdit}
               />
             ))}
           </div>

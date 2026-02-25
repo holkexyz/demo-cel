@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import type {
   WorkScopeTagListItem,
   WorkScopeTagKind,
@@ -37,10 +37,11 @@ const KIND_COLORS: Record<
 export interface TagListProps {
   tags: WorkScopeTagListItem[];
   onDelete?: (rkey: string) => void;
+  onEdit?: (tag: WorkScopeTagListItem) => void;
   isLoading: boolean;
 }
 
-const TagList: React.FC<TagListProps> = ({ tags, onDelete, isLoading }) => {
+const TagList: React.FC<TagListProps> = ({ tags, onDelete, onEdit, isLoading }) => {
   const [search, setSearch] = useState("");
   const [activeKind, setActiveKind] = useState<WorkScopeTagKind | "all">("all");
 
@@ -173,16 +174,28 @@ const TagList: React.FC<TagListProps> = ({ tags, onDelete, isLoading }) => {
                       </p>
                     )}
                   </div>
-                  {onDelete && (
-                    <button
-                      type="button"
-                      onClick={() => onDelete(tag.rkey)}
-                      className="flex-shrink-0 p-1.5 text-gray-400 hover:text-red-500 transition-colors duration-150 rounded"
-                      aria-label={`Delete ${tag.value.label}`}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    {onEdit && (
+                      <button
+                        type="button"
+                        onClick={() => onEdit(tag)}
+                        className="p-1.5 text-gray-400 hover:text-accent transition-colors duration-150 rounded"
+                        aria-label={`Edit ${tag.value.label}`}
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                    )}
+                    {onDelete && (
+                      <button
+                        type="button"
+                        onClick={() => onDelete(tag.rkey)}
+                        className="p-1.5 text-gray-400 hover:text-red-500 transition-colors duration-150 rounded"
+                        aria-label={`Delete ${tag.value.label}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

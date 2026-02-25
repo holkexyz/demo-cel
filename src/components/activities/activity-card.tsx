@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import Card from "@/components/ui/card";
 import TagChip from "@/components/tags/tag-chip";
 import type { ActivityListItem } from "@/lib/atproto/activity-types";
@@ -11,6 +11,7 @@ export interface ActivityCardProps {
   activity: ActivityListItem;
   availableTags: WorkScopeTagListItem[];
   onDelete?: (rkey: string) => void;
+  onEdit?: (rkey: string) => void;
 }
 
 function formatDate(dateStr: string): string {
@@ -25,6 +26,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   activity,
   availableTags,
   onDelete,
+  onEdit,
 }) => {
   const { value, rkey } = activity;
 
@@ -35,29 +37,54 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     }
   };
 
+  // Use shortDescription; fall back to description for backward compat with old records
+  const displayDescription =
+    value.shortDescription || value.description || "";
+
   return (
     <Card className="relative flex flex-col gap-3">
-      {/* Delete button */}
-      {onDelete && (
-        <button
-          type="button"
-          onClick={handleDelete}
-          className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-red-500 transition-colors duration-150 rounded"
-          aria-label={`Delete ${value.title}`}
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
-      )}
+      {/* Action buttons */}
+      <div className="absolute top-4 right-4 flex items-center gap-1">
+        {onEdit && (
+          <button
+            type="button"
+            onClick={() => onEdit(rkey)}
+            className="p-1.5 text-gray-400 hover:text-accent transition-colors duration-150 rounded"
+            aria-label={`Edit ${value.title}`}
+          >
+            <Pencil className="w-4 h-4" />
+          </button>
+        )}
+        {onDelete && (
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="p-1.5 text-gray-400 hover:text-red-500 transition-colors duration-150 rounded"
+            aria-label={`Delete ${value.title}`}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        )}
+      </div>
 
       {/* Title */}
-      <h3 className="font-mono text-base font-semibold text-navy pr-8 leading-snug">
+      <h3 className="font-mono text-base font-semibold text-navy pr-16 leading-snug">
         {value.title}
       </h3>
 
       {/* Description */}
-      {value.description && (
+      {displayDescription && (
         <p className="text-sm text-gray-600 line-clamp-3">
-          {value.description}
+          {displayDescription}
+        </p>
+      )}
+
+      {/* Date range */}
+      {(value.startDate || value.endDate) && (
+        <p className="text-xs text-gray-500 font-mono">
+          {value.startDate ? formatDate(value.startDate) : "..."}
+          {" \u2192 "}
+          {value.endDate ? formatDate(value.endDate) : "ongoing"}
         </p>
       )}
 

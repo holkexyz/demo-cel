@@ -103,6 +103,30 @@ export async function createWorkScopeTag(
   };
 }
 
+export async function updateWorkScopeTag(
+  agent: Agent,
+  did: string,
+  rkey: string,
+  record: Omit<WorkScopeTagRecord, "$type">,
+): Promise<{ uri: string; cid: string }> {
+  const fullRecord: WorkScopeTagRecord = {
+    ...record,
+    $type: WORK_SCOPE_TAG_COLLECTION,
+  };
+
+  const response = await agent.com.atproto.repo.putRecord({
+    repo: did,
+    collection: WORK_SCOPE_TAG_COLLECTION,
+    rkey,
+    record: fullRecord,
+  });
+
+  return {
+    uri: response.data.uri,
+    cid: response.data.cid,
+  };
+}
+
 export async function deleteWorkScopeTag(
   agent: Agent,
   did: string,

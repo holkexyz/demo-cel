@@ -112,6 +112,32 @@ export async function createActivity(
   };
 }
 
+export async function updateActivity(
+  agent: Agent,
+  did: string,
+  rkey: string,
+  record: Omit<ActivityRecord, "$type">,
+): Promise<{ uri: string; cid: string }> {
+  const response = await agent.com.atproto.repo.putRecord({
+    repo: did,
+    collection: ACTIVITY_COLLECTION,
+    rkey,
+    record: {
+      $type: ACTIVITY_COLLECTION,
+      ...record,
+      workScope: {
+        ...record.workScope,
+        version: record.workScope.version || "v1",
+      },
+    },
+  });
+
+  return {
+    uri: response.data.uri,
+    cid: response.data.cid,
+  };
+}
+
 export async function deleteActivity(
   agent: Agent,
   did: string,
