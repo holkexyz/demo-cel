@@ -14,7 +14,6 @@ import type { ActivityRecord } from "@/lib/atproto/activity-types";
 import {
   buildCelExpression,
   parseTagKeysFromExpression,
-  type ExpressionMode,
   type TagSelection,
 } from "@/lib/cel/expression-builder";
 import AuthGuard from "@/components/layout/auth-guard";
@@ -44,7 +43,7 @@ function ActivityCreatorForm() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedTagKeys, setSelectedTagKeys] = useState<string[]>([]);
-  const [tagModes, setTagModes] = useState<Record<string, ExpressionMode>>({});
+  const [excludedTagKeys, setExcludedTagKeys] = useState<string[]>([]);
 
   // Edit state
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
@@ -84,15 +83,15 @@ function ActivityCreatorForm() {
         const labels = activity.workScope?.labels ?? [];
         setSelectedTagKeys(labels);
 
-        // Try to parse modes from expression (default to must_have_all)
-        const parsedKeys = parseTagKeysFromExpression(
-          activity.workScope?.expression ?? "",
-        );
-        const modes: Record<string, ExpressionMode> = {};
-        for (const k of parsedKeys) {
-          modes[k] = "must_have_all";
+        // Try to parse excluded tags from expression (look for !scope.has patterns)
+        const expr = activity.workScope?.expression ?? "";
+        const excludeRe = /!scope\.has\("([^"]+)"\)/g;
+        const excluded: string[] = [];
+        let exMatch: RegExpExecArray | null;
+        while ((exMatch = excludeRe.exec(expr)) !== null) {
+          excluded.push(exMatch[1]);
         }
-        setTagModes(modes);
+        setExcludedTagKeys(excluded);
       } catch (err) {
         console.error("Failed to load activity for editing:", err);
       } finally {
@@ -105,22 +104,15 @@ function ActivityCreatorForm() {
     };
   }, [editRkey, agent, did]);
 
-  // Compute CEL expression live
+  // Compute CEL expression live: selected = any_of, excluded = exclude
   const celExpression = useMemo(() => {
-    if (selectedTagKeys.length === 0) return "";
-    const selections: TagSelection[] = selectedTagKeys.map((key) => ({
-      key,
-      mode: tagModes[key] ?? "must_have_all",
-    }));
+    if (selectedTagKeys.length === 0 && excludedTagKeys.length === 0) return "";
+    const selections: TagSelection[] = [
+      ...selectedTagKeys.map((key) => ({ key, mode: "any_of" as const })),
+      ...excludedTagKeys.map((key) => ({ key, mode: "exclude" as const })),
+    ];
     return buildCelExpression(selections);
-  }, [selectedTagKeys, tagModes]);
-
-  const handleModeChange = useCallback(
-    (key: string, mode: ExpressionMode) => {
-      setTagModes((prev) => ({ ...prev, [key]: mode }));
-    },
-    [],
-  );
+  }, [selectedTagKeys, excludedTagKeys]);
 
   const handleSuggest = useCallback(async () => {
     if (!title.trim() || !shortDescription.trim()) return;
@@ -392,9 +384,9 @@ function ActivityCreatorForm() {
               <TagSuggestionPanel
                 availableTags={tags}
                 selectedTagKeys={selectedTagKeys}
+                excludedTagKeys={excludedTagKeys}
                 onSelectionChange={setSelectedTagKeys}
-                tagModes={tagModes}
-                onModeChange={handleModeChange}
+                onExcludedChange={setExcludedTagKeys}
                 suggestions={suggestions}
                 isLoadingSuggestions={isLoadingSuggestions}
               />
