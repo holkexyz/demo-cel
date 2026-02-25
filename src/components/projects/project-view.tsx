@@ -8,6 +8,9 @@ import { getProjectImageUrl } from "@/lib/atproto/projects";
 import { extractCid } from "@/lib/atproto/blob-utils";
 import LeafletRenderer from "@/lib/editor/leaflet-renderer";
 import Button from "@/components/ui/button";
+import ProjectCerts from "@/components/projects/project-certs";
+import type { ActivityListItem } from "@/lib/atproto/activity-types";
+import type { WorkScopeTagListItem } from "@/lib/atproto/work-scope-types";
 
 export interface ProjectViewProps {
   project: ProjectRecord;
@@ -19,6 +22,11 @@ export interface ProjectViewProps {
   onShare?: () => void;
   onDelete?: () => void;
   deleteError?: string | null;
+  /** Activities for resolving cert associations */
+  activities?: ActivityListItem[];
+  activitiesLoading?: boolean;
+  /** Tags for rendering tag chips on cert cards */
+  availableTags?: WorkScopeTagListItem[];
 }
 
 const ProjectView: React.FC<ProjectViewProps> = ({
@@ -30,6 +38,9 @@ const ProjectView: React.FC<ProjectViewProps> = ({
   onShare,
   onDelete,
   deleteError,
+  activities,
+  activitiesLoading,
+  availableTags,
 }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -163,6 +174,19 @@ const ProjectView: React.FC<ProjectViewProps> = ({
             did={did}
           />
         </div>
+      )}
+
+      {/* Certs of this project */}
+      {project.items && project.items.length > 0 && (
+        <ProjectCerts
+          items={project.items.map((i) => ({
+            itemIdentifier: { uri: i.itemIdentifier.uri, cid: i.itemIdentifier.cid },
+          }))}
+          activities={activities ?? []}
+          availableTags={availableTags ?? []}
+          mode="view"
+          isLoading={activitiesLoading}
+        />
       )}
 
       {/* Delete confirmation dialog */}

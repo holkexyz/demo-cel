@@ -8,10 +8,14 @@ import {
   resolveDidToPds,
   getPublicProject,
   getPublicProfile,
+  listPublicActivities,
+  listPublicWorkScopeTags,
 } from "@/lib/atproto/public-api";
 import { getProjectImageUrl } from "@/lib/atproto/projects";
 import type { ProjectRecord } from "@/lib/atproto/project-types";
 import type { CertifiedProfile } from "@/lib/atproto/types";
+import type { ActivityListItem } from "@/lib/atproto/activity-types";
+import type { WorkScopeTagListItem } from "@/lib/atproto/work-scope-types";
 import ProjectView from "@/components/projects/project-view";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import ErrorMessage from "@/components/ui/error-message";
@@ -28,6 +32,9 @@ export default function PublicProjectPage() {
   const [pdsUrl, setPdsUrl] = useState<string | null>(null);
   const [project, setProject] = useState<ProjectRecord | null>(null);
   const [profile, setProfile] = useState<CertifiedProfile | null>(null);
+  const [activities, setActivities] = useState<ActivityListItem[]>([]);
+  const [availableTags, setAvailableTags] = useState<WorkScopeTagListItem[]>([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,18 +56,24 @@ export default function PublicProjectPage() {
         const resolvedPdsUrl = await resolveDidToPds(did);
         setPdsUrl(resolvedPdsUrl);
 
-        // Step 2: Fetch project and profile in parallel
-        const [fetchedProject, fetchedProfile] = await Promise.all([
-          getPublicProject(resolvedPdsUrl, did, rkey),
-          getPublicProfile(resolvedPdsUrl, did),
-        ]);
+        // Step 2: Fetch project, profile, activities, and tags in parallel
+        const [fetchedProject, fetchedProfile, fetchedActivities, fetchedTags] =
+          await Promise.all([
+            getPublicProject(resolvedPdsUrl, did, rkey),
+            getPublicProfile(resolvedPdsUrl, did),
+            listPublicActivities(resolvedPdsUrl, did).catch(() => [] as ActivityListItem[]),
+            listPublicWorkScopeTags(resolvedPdsUrl, did).catch(() => [] as WorkScopeTagListItem[]),
+          ]);
 
         if (!fetchedProject) {
           setError("This project could not be found.");
         } else {
           setProject(fetchedProject);
           setProfile(fetchedProfile);
+          setActivities(fetchedActivities);
+          setAvailableTags(fetchedTags);
         }
+        setActivitiesLoading(false);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to load project."
@@ -174,6 +187,9 @@ export default function PublicProjectPage() {
         pdsUrl={pdsUrl}
         did={did}
         isOwner={isOwner}
+        activities={activities}
+        activitiesLoading={activitiesLoading}
+        availableTags={availableTags}
       />
     </div>
   );

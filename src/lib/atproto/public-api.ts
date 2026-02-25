@@ -7,6 +7,10 @@
 
 import type { CertifiedProfile } from "./types";
 import type { ProjectRecord } from "./project-types";
+import type { ActivityListItem, ActivityRecord } from "./activity-types";
+import { ACTIVITY_COLLECTION } from "./activity-types";
+import type { WorkScopeTagListItem, WorkScopeTagRecord } from "./work-scope-types";
+import { WORK_SCOPE_TAG_COLLECTION } from "./work-scope-types";
 
 const PROFILE_COLLECTION = "app.certified.actor.profile";
 const PROJECT_COLLECTION = "org.hypercerts.claim.collection";
@@ -170,4 +174,76 @@ export async function getPublicProject(
   const record = await getPublicRecord(pdsUrl, did, PROJECT_COLLECTION, rkey);
   if (!record) return null;
   return record.value as ProjectRecord;
+}
+
+/**
+ * List records from a public XRPC endpoint (no auth).
+ */
+async function listPublicRecords(
+  pdsUrl: string,
+  did: string,
+  collection: string,
+  limit = 100
+): Promise<Array<{ uri: string; cid: string; value: unknown }>> {
+  const params = new URLSearchParams({
+    repo: did,
+    collection,
+    limit: String(limit),
+  });
+
+  const url = `${pdsUrl}/xrpc/com.atproto.repo.listRecords?${params.toString()}`;
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    if (response.status === 400 || response.status === 404) {
+      return [];
+    }
+    throw new Error(`Failed to list records: HTTP ${response.status}`);
+  }
+
+  const data = (await response.json()) as {
+    records: Array<{ uri: string; cid: string; value: unknown }>;
+  };
+
+  return data.records ?? [];
+}
+
+/**
+ * Fetch all activities from a user's repo via public XRPC endpoint.
+ */
+export async function listPublicActivities(
+  pdsUrl: string,
+  did: string
+): Promise<ActivityListItem[]> {
+  const records = await listPublicRecords(pdsUrl, did, ACTIVITY_COLLECTION);
+  return records.map((r) => {
+    const uriParts = r.uri.split("/");
+    const rkey = uriParts[uriParts.length - 1];
+    return {
+      uri: r.uri,
+      cid: r.cid,
+      rkey,
+      value: r.value as ActivityRecord,
+    };
+  });
+}
+
+/**
+ * Fetch all work scope tags from a user's repo via public XRPC endpoint.
+ */
+export async function listPublicWorkScopeTags(
+  pdsUrl: string,
+  did: string
+): Promise<WorkScopeTagListItem[]> {
+  const records = await listPublicRecords(pdsUrl, did, WORK_SCOPE_TAG_COLLECTION);
+  return records.map((r) => {
+    const uriParts = r.uri.split("/");
+    const rkey = uriParts[uriParts.length - 1];
+    return {
+      uri: r.uri,
+      cid: r.cid,
+      rkey,
+      value: r.value as WorkScopeTagRecord,
+    };
+  });
 }

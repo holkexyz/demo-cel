@@ -17,6 +17,9 @@ import type {
   LeafletLinearDocument,
   ProjectListItem,
 } from "@/lib/atproto/project-types";
+import type { ProjectCertItem } from "@/components/projects/project-certs";
+import { useActivities } from "@/hooks/use-activities";
+import { useWorkScopeTags } from "@/hooks/use-work-scope-tags";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import ErrorMessage from "@/components/ui/error-message";
 
@@ -33,6 +36,11 @@ function EditProjectContent() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
+  // Cert association state
+  const [items, setItems] = useState<ProjectCertItem[]>([]);
+  const { activities, isLoading: activitiesLoading } = useActivities();
+  const { tags: availableTags } = useWorkScopeTags();
+
   useEffect(() => {
     if (!agent || !did || !rkey) return;
 
@@ -48,6 +56,12 @@ function EditProjectContent() {
           setLoadError("Project not found");
         } else {
           setProject(result);
+          setItems(
+            (result.value.items ?? []).map((i) => ({
+              itemIdentifier: { uri: i.itemIdentifier.uri, cid: i.itemIdentifier.cid },
+              itemWeight: i.itemWeight,
+            }))
+          );
         }
       } catch (err) {
         if (cancelled) return;
@@ -105,7 +119,7 @@ function EditProjectContent() {
         shortDescription: data.shortDescription || undefined,
         description: data.description,
         banner: bannerField,
-        items: project.value.items ?? [],
+        items: items,
         createdAt: project.value.createdAt,
       });
 
@@ -188,6 +202,11 @@ function EditProjectContent() {
         saveError={saveError}
         pdsUrl={pdsUrl ?? undefined}
         did={did ?? undefined}
+        items={items}
+        onItemsChange={setItems}
+        activities={activities}
+        activitiesLoading={activitiesLoading}
+        availableTags={availableTags}
       />
     </>
   );

@@ -9,6 +9,8 @@ import ProjectView from "@/components/projects/project-view";
 import ShareModal from "@/components/projects/share-modal";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import ErrorMessage from "@/components/ui/error-message";
+import { useActivities } from "@/hooks/use-activities";
+import { useWorkScopeTags } from "@/hooks/use-work-scope-tags";
 
 export default function ProjectPage() {
   const params = useParams();
@@ -22,6 +24,10 @@ export default function ProjectPage() {
   const [error, setError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+  // Load activities and tags for cert association display
+  const { activities, isLoading: activitiesLoading } = useActivities();
+  const { tags: availableTags } = useWorkScopeTags();
 
   useEffect(() => {
     if (auth.isLoading) return;
@@ -125,6 +131,9 @@ export default function ProjectPage() {
           onShare={handleShare}
           onDelete={handleDelete}
           deleteError={deleteError}
+          activities={activities}
+          activitiesLoading={activitiesLoading}
+          availableTags={availableTags}
         />
       </div>
 

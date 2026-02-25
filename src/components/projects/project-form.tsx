@@ -7,6 +7,11 @@ import type { BlobRef } from "@atproto/api";
 import type { LeafletLinearDocument } from "@/lib/atproto/project-types";
 import { ProjectEditor } from "@/components/editor/project-editor";
 import Button from "@/components/ui/button";
+import ProjectCerts, {
+  type ProjectCertItem,
+} from "@/components/projects/project-certs";
+import type { ActivityListItem } from "@/lib/atproto/activity-types";
+import type { WorkScopeTagListItem } from "@/lib/atproto/work-scope-types";
 
 export interface ProjectFormProps {
   initialData?: {
@@ -27,6 +32,12 @@ export interface ProjectFormProps {
   saveError?: string | null;
   pdsUrl?: string;
   did?: string;
+  /** Cert association props (edit mode) */
+  items?: ProjectCertItem[];
+  onItemsChange?: (items: ProjectCertItem[]) => void;
+  activities?: ActivityListItem[];
+  activitiesLoading?: boolean;
+  availableTags?: WorkScopeTagListItem[];
 }
 
 const EMPTY_DOCUMENT: LeafletLinearDocument = { blocks: [] };
@@ -40,6 +51,11 @@ export function ProjectForm({
   saveError,
   pdsUrl,
   did,
+  items,
+  onItemsChange,
+  activities,
+  activitiesLoading,
+  availableTags,
 }: ProjectFormProps) {
   const router = useRouter();
 
@@ -241,6 +257,18 @@ export function ProjectForm({
             did={did}
           />
         </div>
+
+        {/* Cert associations (edit mode) */}
+        {items && onItemsChange && (
+          <ProjectCerts
+            items={items}
+            activities={activities ?? []}
+            availableTags={availableTags ?? []}
+            mode="edit"
+            onItemsChange={onItemsChange}
+            isLoading={activitiesLoading}
+          />
+        )}
       </div>
 
       {/* Sticky action bar */}
