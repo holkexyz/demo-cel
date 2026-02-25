@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { ExternalLink } from "lucide-react";
+import Button from "@/components/ui/button";
 import ProfileHeader from "./profile-header";
 import type { CertifiedProfile } from "@/lib/atproto/types";
 
@@ -18,6 +20,21 @@ const ProfileView: React.FC<ProfileViewProps> = ({
   avatarUrl,
   bannerUrl,
 }) => {
+  const formatMemberSince = (dateString?: string): string | null => {
+    if (!dateString) return null;
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      });
+    } catch {
+      return null;
+    }
+  };
+
+  const memberSince = formatMemberSince(profile?.createdAt);
+
   return (
     <div>
       <ProfileHeader
@@ -54,9 +71,26 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </div>
         )}
 
-        <div className="mt-4">
-          <p className="app-card__label">DID</p>
-          <p className="text-body text-gray-400 text-sm font-mono break-all">{did}</p>
+        <div className="mt-4 flex items-end justify-between">
+          <div>
+            {memberSince && (
+              <>
+                <p className="app-card__label">Member since</p>
+                <p className="text-body text-gray-700">{memberSince}</p>
+              </>
+            )}
+            <div className="mt-2">
+              <p className="app-card__label">DID</p>
+              <p className="text-body text-gray-400 text-sm font-mono break-all">
+                {did}
+              </p>
+            </div>
+          </div>
+          <Link href="/profile/edit">
+            <Button variant="secondary" size="sm">
+              Edit Profile
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

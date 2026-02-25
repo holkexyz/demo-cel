@@ -90,7 +90,7 @@ const Navbar: React.FC = () => {
                 ))}
               </div>
               <Link
-                href="/"
+                href="/profile"
                 className="flex items-center hover:opacity-80 transition-opacity duration-150"
               >
                 <Avatar size="sm" src={avatarUrl || undefined} fallbackInitials={avatarInitials} />
