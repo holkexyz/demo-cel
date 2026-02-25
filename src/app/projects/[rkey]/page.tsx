@@ -71,7 +71,7 @@ export default function ProjectPage() {
     setDeleteError(null);
     try {
       await deleteProject(auth.agent, auth.did, rkey);
-      router.push("/");
+      router.push("/projects");
     } catch (err) {
       setDeleteError(
         err instanceof Error ? err.message : "Failed to delete project. Please try again."

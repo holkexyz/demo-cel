@@ -128,11 +128,11 @@ export default function PublicProjectPage() {
     <div className="max-w-4xl mx-auto px-4 py-8 pt-[56px]">
       {/* Back link */}
       <Link
-        href="/"
+        href="/projects"
         className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-navy font-mono transition-colors duration-150 mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back
+        Back to projects
       </Link>
 
       {/* Author header */}
