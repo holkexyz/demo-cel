@@ -2,11 +2,8 @@
 
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useNavbarVariant } from "@/lib/navbar-context";
-import { useProjects } from "@/hooks/use-projects";
-import ProjectGallery from "@/components/projects/project-gallery";
 import { Tags, Sparkles, Search } from "lucide-react";
 
 const FEATURE_CARDS = [
@@ -40,10 +37,8 @@ const QUICK_START_STEPS = [
 ];
 
 export default function HomeClient() {
-  const { isLoading, session, did, agent, pdsUrl, openSignUp } = useAuth();
-  const { projects, isLoading: projectsLoading, error: projectsError, refetch: refetchProjects } = useProjects(agent, did);
+  const { isLoading, session, openSignUp } = useAuth();
   const { setVariant } = useNavbarVariant();
-  const router = useRouter();
 
   useEffect(() => {
     if (!session && !isLoading) {
@@ -134,20 +129,6 @@ export default function HomeClient() {
               ))}
             </ol>
           </div>
-
-          {/* Projects section */}
-          {did ? (
-            <ProjectGallery
-              projects={projects}
-              isLoading={projectsLoading}
-              error={projectsError}
-              pdsUrl={pdsUrl || ""}
-              did={did}
-              onProjectClick={(rkey) => router.push(`/projects/${rkey}`)}
-              onCreateProject={() => router.push("/projects/new")}
-              onRetry={refetchProjects}
-            />
-          ) : null}
         </div>
       </div>
     );
