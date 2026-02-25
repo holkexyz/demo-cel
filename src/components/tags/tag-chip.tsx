@@ -17,30 +17,30 @@ const KIND_COLORS: Record<
   string,
   { base: string; selected: string; border: string }
 > = {
-  ecosystem: {
+  topic: {
     base: "bg-emerald-100 text-emerald-800",
     selected: "bg-emerald-200 text-emerald-800",
     border: "border-emerald-300",
+  },
+  language: {
+    base: "bg-cyan-100 text-cyan-800",
+    selected: "bg-cyan-200 text-cyan-800",
+    border: "border-cyan-300",
+  },
+  domain: {
+    base: "bg-purple-100 text-purple-800",
+    selected: "bg-purple-200 text-purple-800",
+    border: "border-purple-300",
   },
   method: {
     base: "bg-blue-100 text-blue-800",
     selected: "bg-blue-200 text-blue-800",
     border: "border-blue-300",
   },
-  data: {
-    base: "bg-purple-100 text-purple-800",
-    selected: "bg-purple-200 text-purple-800",
-    border: "border-purple-300",
-  },
-  governance: {
+  tag: {
     base: "bg-amber-100 text-amber-800",
     selected: "bg-amber-200 text-amber-800",
     border: "border-amber-300",
-  },
-  outcomes: {
-    base: "bg-rose-100 text-rose-800",
-    selected: "bg-rose-200 text-rose-800",
-    border: "border-rose-300",
   },
 };
 
@@ -52,7 +52,7 @@ export const TagChip: React.FC<TagChipProps> = ({
   showKind = false,
   size = "md",
 }) => {
-  const colors = KIND_COLORS[tag.value.kind] ?? KIND_COLORS.ecosystem;
+  const colors = KIND_COLORS[tag.value.kind ?? "topic"] ?? KIND_COLORS.topic;
   const bgClass = selected ? colors.selected : colors.base;
   const sizeClass =
     size === "sm" ? "text-xs px-2 py-0.5" : "text-sm px-3 py-1";

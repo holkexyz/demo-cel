@@ -66,9 +66,9 @@ export function CollectionsPanel({
       <div className="flex flex-col gap-3">
         {DEMO_COLLECTIONS.map((collection) => {
           const matchCount = activities.filter((activity) => {
-            const tagKeys = activity.value.workScope?.tagKeys ?? [];
+            const labels = activity.value.workScope?.labels ?? [];
             return evaluateCel(collection.expression, {
-              scope: { tags: tagKeys },
+              scope: { tags: labels },
             });
           }).length;
 

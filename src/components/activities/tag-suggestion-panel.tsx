@@ -51,7 +51,7 @@ export function TagSuggestionPanel({
       map.set(kind, []);
     }
     for (const tag of availableTags) {
-      const kind = tag.value.kind;
+      const kind = tag.value.kind ?? "topic";
       if (!map.has(kind)) map.set(kind, []);
       map.get(kind)!.push(tag);
     }

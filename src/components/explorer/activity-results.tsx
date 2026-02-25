@@ -38,9 +38,9 @@ export function ActivityResults({
 
   // Evaluate each activity
   const evaluated = activities.map((activity) => {
-    const tagKeys = activity.value.workScope?.tagKeys ?? [];
+    const labels = activity.value.workScope?.labels ?? [];
     const matches = expression
-      ? evaluateCel(expression, { scope: { tags: tagKeys } })
+      ? evaluateCel(expression, { scope: { tags: labels } })
       : true;
     return { activity, matches };
   });
@@ -82,9 +82,9 @@ export function ActivityResults({
         ) : (
           <div className="flex flex-col gap-3">
             {sorted.map(({ activity, matches }) => {
-              const tagKeys = activity.value.workScope?.tagKeys ?? [];
-              const resolvedTags = tagKeys
-                .map((k) => tagMap.get(k))
+              const labels = activity.value.workScope?.labels ?? [];
+              const resolvedTags = labels
+                .map((k: string) => tagMap.get(k))
                 .filter((t): t is WorkScopeTagListItem => t !== undefined);
 
               return (

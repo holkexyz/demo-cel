@@ -97,6 +97,11 @@ export async function createActivity(
     record: {
       $type: ACTIVITY_COLLECTION,
       ...record,
+      workScope: {
+        ...record.workScope,
+        version: record.workScope.version || "v1",
+        createdAt: record.workScope.createdAt || createdAt,
+      },
       createdAt,
     },
   });

@@ -154,7 +154,7 @@ export function RuleBuilder({ availableTags, onExpressionChange, expression }: R
 
   const tagsByKind = WORK_SCOPE_TAG_KINDS.map((kind) => ({
     kind,
-    tags: availableTags.filter((t) => t.value.kind === kind),
+    tags: availableTags.filter((t) => (t.value.kind ?? "topic") === kind),
   })).filter((g) => g.tags.length > 0);
 
   return (

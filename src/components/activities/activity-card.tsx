@@ -62,9 +62,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
       )}
 
       {/* Tag chips */}
-      {value.workScope?.tagKeys && value.workScope.tagKeys.length > 0 && (
+      {value.workScope?.labels && value.workScope.labels.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
-          {value.workScope.tagKeys.map((key) => {
+          {value.workScope.labels.map((key: string) => {
             const found = availableTags.find((t) => t.value.key === key);
             if (found) {
               return <TagChip key={key} tag={found} size="sm" />;

@@ -12,25 +12,25 @@ const KIND_COLORS: Record<
   WorkScopeTagKind,
   { pill: string; heading: string }
 > = {
-  ecosystem: {
+  topic: {
     pill: "bg-emerald-100 text-emerald-800 border-emerald-300",
     heading: "text-emerald-700",
+  },
+  language: {
+    pill: "bg-cyan-100 text-cyan-800 border-cyan-300",
+    heading: "text-cyan-700",
+  },
+  domain: {
+    pill: "bg-purple-100 text-purple-800 border-purple-300",
+    heading: "text-purple-700",
   },
   method: {
     pill: "bg-blue-100 text-blue-800 border-blue-300",
     heading: "text-blue-700",
   },
-  data: {
-    pill: "bg-purple-100 text-purple-800 border-purple-300",
-    heading: "text-purple-700",
-  },
-  governance: {
+  tag: {
     pill: "bg-amber-100 text-amber-800 border-amber-300",
     heading: "text-amber-700",
-  },
-  outcomes: {
-    pill: "bg-rose-100 text-rose-800 border-rose-300",
-    heading: "text-rose-700",
   },
 };
 
@@ -59,14 +59,19 @@ const TagList: React.FC<TagListProps> = ({ tags, onDelete, isLoading }) => {
 
   const grouped = useMemo(() => {
     const groups: Record<WorkScopeTagKind, WorkScopeTagListItem[]> = {
-      ecosystem: [],
+      topic: [],
+      language: [],
+      domain: [],
       method: [],
-      data: [],
-      governance: [],
-      outcomes: [],
+      tag: [],
     };
     for (const tag of filtered) {
-      groups[tag.value.kind].push(tag);
+      const kind = (tag.value.kind ?? "topic") as WorkScopeTagKind;
+      if (groups[kind]) {
+        groups[kind].push(tag);
+      } else {
+        groups.topic.push(tag);
+      }
     }
     return groups;
   }, [filtered]);
@@ -156,7 +161,7 @@ const TagList: React.FC<TagListProps> = ({ tags, onDelete, isLoading }) => {
                       <code className="text-xs font-mono text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
                         {tag.value.key}
                       </code>
-                      {tag.value.status && tag.value.status !== "active" && (
+                      {tag.value.status && tag.value.status !== "accepted" && (
                         <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 border border-gray-200">
                           {tag.value.status}
                         </span>

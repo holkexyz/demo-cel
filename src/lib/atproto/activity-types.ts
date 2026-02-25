@@ -1,15 +1,27 @@
 export const ACTIVITY_COLLECTION = "org.hypercerts.claim.activity";
 
+/**
+ * Matches lexicon: org.hypercerts.helper.celExpression (embedded as workScope)
+ * @see https://github.com/hypercerts-org/hypercerts-lexicon/blob/feat/cel-work-scope-expressions/lexicons/org/hypercerts/helper/celExpression.json
+ */
+export interface CelExpression {
+  $type?: string;
+  /** CEL expression encoding work scope conditions. maxLength: 10000 */
+  expression: string;
+  /** Flat list of workScopeTag keys referenced in the expression. maxLength: 100 */
+  labels: string[];
+  /** CEL context schema version. Currently 'v1'. maxLength: 16 */
+  version: string;
+  /** Client-declared timestamp. format: datetime */
+  createdAt: string;
+}
+
 export interface ActivityRecord {
   $type?: string;
   title: string;
-  description: string;   // plain text description
-  workScope: {
-    expression: string;  // CEL expression, e.g. scope.hasAll(["mangrove_restoration","open_data"])
-    tagKeys: string[];   // the tag keys referenced in the expression
-    labels: string[];    // same as tagKeys, used for indexing/prefiltering
-  };
-  createdAt: string;     // ISO 8601
+  description: string;
+  workScope: CelExpression;
+  createdAt: string;
 }
 
 export interface ActivityListItem {

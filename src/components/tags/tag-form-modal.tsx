@@ -31,9 +31,9 @@ const TagFormModal: React.FC<TagFormModalProps> = ({
   const [label, setLabel] = useState("");
   const [key, setKey] = useState("");
   const [keyManuallyEdited, setKeyManuallyEdited] = useState(false);
-  const [kind, setKind] = useState<WorkScopeTagRecord["kind"]>("ecosystem");
+  const [kind, setKind] = useState<string>("topic");
   const [description, setDescription] = useState("");
-  const [parent, setParent] = useState("");
+  // parent is now a StrongRef (uri+cid) — omitted from create form for simplicity
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -65,9 +65,8 @@ const TagFormModal: React.FC<TagFormModalProps> = ({
       setLabel("");
       setKey("");
       setKeyManuallyEdited(false);
-      setKind("ecosystem");
+      setKind("topic");
       setDescription("");
-      setParent("");
       setErrors({});
       setIsSubmitting(false);
     }
@@ -94,10 +93,9 @@ const TagFormModal: React.FC<TagFormModalProps> = ({
       await onSubmit({
         key: key.trim(),
         label: label.trim(),
-        kind,
-        description: description.trim(),
-        parent: parent.trim() || undefined,
-        status: "active",
+        kind: kind || undefined,
+        description: description.trim() || undefined,
+        status: "accepted",
       });
       onClose();
     } catch (err) {
@@ -181,9 +179,7 @@ const TagFormModal: React.FC<TagFormModalProps> = ({
             <label className="app-card__label block mb-1.5">Kind</label>
             <select
               value={kind}
-              onChange={(e) =>
-                setKind(e.target.value as WorkScopeTagRecord["kind"])
-              }
+              onChange={(e) => setKind(e.target.value)}
               className="h-10 w-full border border-[rgba(15,37,68,0.15)] rounded bg-white px-4 text-sm text-gray-700 focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-all duration-150"
             >
               {WORK_SCOPE_TAG_KINDS.map((k) => (
@@ -204,26 +200,6 @@ const TagFormModal: React.FC<TagFormModalProps> = ({
               rows={3}
               className="w-full border border-[rgba(15,37,68,0.15)] rounded bg-white px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-400 focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-all duration-150 resize-y"
             />
-          </div>
-
-          {/* Parent */}
-          <div>
-            <label className="app-card__label block mb-1.5">
-              Parent key (optional)
-            </label>
-            <input
-              type="text"
-              value={parent}
-              onChange={(e) => setParent(e.target.value)}
-              placeholder="e.g. ecosystem"
-              list="existing-keys"
-              className="h-10 w-full border border-[rgba(15,37,68,0.15)] rounded bg-white px-4 text-sm font-mono text-gray-700 placeholder:text-gray-400 focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-all duration-150"
-            />
-            <datalist id="existing-keys">
-              {existingKeys.map((k) => (
-                <option key={k} value={k} />
-              ))}
-            </datalist>
           </div>
 
           {errors.submit && (

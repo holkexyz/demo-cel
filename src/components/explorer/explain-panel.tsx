@@ -20,7 +20,7 @@ export function ExplainPanel({
   onClose,
 }: ExplainPanelProps) {
   const tagMap = new Map(availableTags.map((t) => [t.value.key, t]));
-  const tagKeys = activity.value.workScope?.tagKeys ?? [];
+  const tagKeys = activity.value.workScope?.labels ?? [];
 
   const result = evaluateCelWithDetails(expression, {
     scope: { tags: tagKeys },

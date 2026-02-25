@@ -119,8 +119,9 @@ function ActivityCreatorForm() {
         description: description.trim(),
         workScope: {
           expression: celExpression,
-          tagKeys: selectedTagKeys,
           labels: selectedTagKeys,
+          version: "v1",
+          createdAt: new Date().toISOString(),
         },
       });
 

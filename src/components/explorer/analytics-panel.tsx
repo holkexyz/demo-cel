@@ -13,19 +13,19 @@ export interface AnalyticsPanelProps {
 
 // Kind colors matching TagChip
 const KIND_BAR_COLORS: Record<string, string> = {
-  ecosystem: "bg-emerald-400",
+  topic: "bg-emerald-400",
+  language: "bg-cyan-400",
+  domain: "bg-purple-400",
   method: "bg-blue-400",
-  data: "bg-purple-400",
-  governance: "bg-amber-400",
-  outcomes: "bg-rose-400",
+  tag: "bg-amber-400",
 };
 
 const KIND_CARD_COLORS: Record<string, string> = {
-  ecosystem: "bg-emerald-50 border-emerald-200 text-emerald-800",
+  topic: "bg-emerald-50 border-emerald-200 text-emerald-800",
+  language: "bg-cyan-50 border-cyan-200 text-cyan-800",
+  domain: "bg-purple-50 border-purple-200 text-purple-800",
   method: "bg-blue-50 border-blue-200 text-blue-800",
-  data: "bg-purple-50 border-purple-200 text-purple-800",
-  governance: "bg-amber-50 border-amber-200 text-amber-800",
-  outcomes: "bg-rose-50 border-rose-200 text-rose-800",
+  tag: "bg-amber-50 border-amber-200 text-amber-800",
 };
 
 const QUICK_QUERIES = [
@@ -60,8 +60,8 @@ export function AnalyticsPanel({ activities, availableTags }: AnalyticsPanelProp
   const tagFrequency = useMemo(() => {
     const counts = new Map<string, number>();
     for (const activity of activities) {
-      const tagKeys = activity.value.workScope?.tagKeys ?? [];
-      for (const key of tagKeys) {
+      const labels = activity.value.workScope?.labels ?? [];
+      for (const key of labels) {
         counts.set(key, (counts.get(key) ?? 0) + 1);
       }
     }
@@ -78,8 +78,8 @@ export function AnalyticsPanel({ activities, availableTags }: AnalyticsPanelProp
         availableTags.filter((t) => t.value.kind === kind).map((t) => t.value.key)
       );
       const count = activities.filter((activity) => {
-        const tagKeys = activity.value.workScope?.tagKeys ?? [];
-        return tagKeys.some((k) => kindTagKeys.has(k));
+        const labels = activity.value.workScope?.labels ?? [];
+        return labels.some((k: string) => kindTagKeys.has(k));
       }).length;
       const pct = total > 0 ? Math.round((count / total) * 100) : 0;
       return { kind, count, pct };
@@ -90,8 +90,8 @@ export function AnalyticsPanel({ activities, availableTags }: AnalyticsPanelProp
   const quickQueryResults = useMemo(() => {
     return QUICK_QUERIES.map(({ label, expression }) => {
       const count = activities.filter((activity) => {
-        const tagKeys = activity.value.workScope?.tagKeys ?? [];
-        return evaluateCel(expression, { scope: { tags: tagKeys } });
+        const labels = activity.value.workScope?.labels ?? [];
+        return evaluateCel(expression, { scope: { tags: labels } });
       }).length;
       const pct = total > 0 ? Math.round((count / total) * 100) : 0;
       return { label, count, pct };
@@ -122,9 +122,9 @@ export function AnalyticsPanel({ activities, availableTags }: AnalyticsPanelProp
         ) : (
           <div className="flex flex-col gap-2">
             {tagFrequency.map(({ key, count, tag }) => {
-              const kind = tag?.value.kind ?? "ecosystem";
+              const kind = tag?.value.kind ?? "topic";
               const label = tag?.value.label ?? key;
-              const barColor = KIND_BAR_COLORS[kind] ?? KIND_BAR_COLORS.ecosystem;
+              const barColor = KIND_BAR_COLORS[kind] ?? KIND_BAR_COLORS.topic;
               const widthPct = total > 0 ? Math.round((count / total) * 100) : 0;
               return (
                 <div key={key} className="flex items-center gap-3">
@@ -154,7 +154,7 @@ export function AnalyticsPanel({ activities, availableTags }: AnalyticsPanelProp
         </h3>
         <div className="grid grid-cols-5 gap-3">
           {kindDistribution.map(({ kind, count, pct }) => {
-            const cardColor = KIND_CARD_COLORS[kind] ?? KIND_CARD_COLORS.ecosystem;
+            const cardColor = KIND_CARD_COLORS[kind] ?? KIND_CARD_COLORS.topic;
             return (
               <div
                 key={kind}

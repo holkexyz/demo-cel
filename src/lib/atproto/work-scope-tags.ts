@@ -41,7 +41,7 @@ export async function listWorkScopeTags(
   });
 
   return items.sort((a, b) => {
-    const kindCmp = a.value.kind.localeCompare(b.value.kind);
+    const kindCmp = (a.value.kind ?? "").localeCompare(b.value.kind ?? "");
     if (kindCmp !== 0) return kindCmp;
     return a.value.label.localeCompare(b.value.label);
   });
@@ -87,7 +87,7 @@ export async function createWorkScopeTag(
     ...record,
     $type: WORK_SCOPE_TAG_COLLECTION,
     createdAt: new Date().toISOString(),
-    status: record.status ?? "active",
+    status: record.status ?? "accepted",
   };
 
   const response = await agent.com.atproto.repo.createRecord({
@@ -118,41 +118,41 @@ export async function deleteWorkScopeTag(
 type SeedTag = Omit<WorkScopeTagRecord, "$type" | "createdAt" | "status">;
 
 const SEED_TAGS: SeedTag[] = [
-  // ecosystem (6)
+  // topic (6) — ecosystem/nature topics
   {
     key: "mangrove_restoration",
     label: "Mangrove Restoration",
-    kind: "ecosystem",
+    kind: "topic",
     description: "Restoring mangrove forests to protect coastlines and sequester carbon.",
   },
   {
     key: "wetland_restoration",
     label: "Wetland Restoration",
-    kind: "ecosystem",
+    kind: "topic",
     description: "Rehabilitating wetland ecosystems to support biodiversity and water filtration.",
   },
   {
     key: "coral_reef_protection",
     label: "Coral Reef Protection",
-    kind: "ecosystem",
+    kind: "topic",
     description: "Protecting and restoring coral reef ecosystems threatened by climate change.",
   },
   {
     key: "forest_regeneration",
     label: "Forest Regeneration",
-    kind: "ecosystem",
+    kind: "topic",
     description: "Supporting natural forest regeneration to rebuild woodland ecosystems.",
   },
   {
     key: "grassland_restoration",
     label: "Grassland Restoration",
-    kind: "ecosystem",
+    kind: "topic",
     description: "Restoring native grasslands to support soil health and wildlife habitat.",
   },
   {
     key: "urban_greening",
     label: "Urban Greening",
-    kind: "ecosystem",
+    kind: "topic",
     description: "Introducing green infrastructure into urban environments to improve biodiversity.",
   },
   // method (5)
@@ -186,67 +186,67 @@ const SEED_TAGS: SeedTag[] = [
     kind: "method",
     description: "Combining trees with crops or livestock to restore land while supporting livelihoods.",
   },
-  // data (4)
+  // domain (4) — data/measurement domains
   {
     key: "open_data",
     label: "Open Data",
-    kind: "data",
+    kind: "domain",
     description: "Making environmental datasets publicly available to accelerate research and accountability.",
   },
   {
     key: "biodiversity_monitoring",
     label: "Biodiversity Monitoring",
-    kind: "data",
+    kind: "domain",
     description: "Systematically tracking species presence and abundance to measure ecosystem recovery.",
   },
   {
     key: "carbon_measurement",
     label: "Carbon Measurement",
-    kind: "data",
+    kind: "domain",
     description: "Quantifying carbon stocks and fluxes to verify sequestration outcomes.",
   },
   {
     key: "water_quality_tracking",
     label: "Water Quality Tracking",
-    kind: "data",
+    kind: "domain",
     description: "Monitoring water quality indicators to assess ecosystem health and restoration progress.",
   },
-  // governance (3)
+  // tag (3) — governance/process tags
   {
     key: "community_led",
     label: "Community Led",
-    kind: "governance",
+    kind: "tag",
     description: "Governance structures where local communities hold decision-making authority.",
   },
   {
     key: "multi_stakeholder",
     label: "Multi Stakeholder",
-    kind: "governance",
+    kind: "tag",
     description: "Inclusive governance models that bring together diverse actors for collective decisions.",
   },
   {
     key: "transparent_reporting",
     label: "Transparent Reporting",
-    kind: "governance",
+    kind: "tag",
     description: "Publicly disclosing project activities, outcomes, and finances to build trust.",
   },
-  // outcomes (3)
+  // tag (3) — outcome tags
   {
     key: "carbon_sequestration",
     label: "Carbon Sequestration",
-    kind: "outcomes",
+    kind: "tag",
     description: "Capturing and storing atmospheric carbon dioxide through ecosystem restoration.",
   },
   {
     key: "biodiversity_increase",
     label: "Biodiversity Increase",
-    kind: "outcomes",
+    kind: "tag",
     description: "Measurable growth in species richness and abundance as a result of restoration.",
   },
   {
     key: "livelihood_improvement",
     label: "Livelihood Improvement",
-    kind: "outcomes",
+    kind: "tag",
     description: "Enhancing the economic and social wellbeing of communities through nature-based work.",
   },
 ];
