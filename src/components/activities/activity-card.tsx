@@ -30,7 +30,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
 
   const handleDelete = () => {
     if (!onDelete) return;
-    if (window.confirm(`Delete activity "${value.title}"?`)) {
+    if (window.confirm(`Delete cert "${value.title}"?`)) {
       onDelete(rkey);
     }
   };

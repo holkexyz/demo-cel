@@ -62,7 +62,7 @@ export function ExplainPanel({
           {/* Section 1: Activity Work Scope */}
           <section>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-mid-gray)] mb-3">
-              Activity Work Scope
+              Cert Work Scope
             </h3>
 
             {activity.value.workScope?.expression ? (
@@ -71,7 +71,7 @@ export function ExplainPanel({
               </div>
             ) : (
               <p className="text-sm text-[var(--color-mid-gray)] italic mb-3">
-                No CEL expression on this activity.
+                No CEL expression on this cert.
               </p>
             )}
 
@@ -91,7 +91,7 @@ export function ExplainPanel({
               </div>
             ) : (
               <p className="text-sm text-[var(--color-mid-gray)] italic">
-                No tags on this activity.
+                No tags on this cert.
               </p>
             )}
           </section>

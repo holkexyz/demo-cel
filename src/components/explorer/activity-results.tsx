@@ -59,7 +59,7 @@ export function ActivityResults({
       <div className="bg-white border border-[rgba(15,37,68,0.1)] rounded-lg p-6 flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-[var(--color-navy)]">
-            Activities
+            Certs
           </h2>
           {expression ? (
             <span className="text-sm font-mono text-[var(--color-mid-gray)]">
@@ -70,14 +70,14 @@ export function ActivityResults({
             </span>
           ) : (
             <span className="text-sm text-[var(--color-mid-gray)] italic">
-              Enter a rule to filter activities
+              Enter a rule to filter certs
             </span>
           )}
         </div>
 
         {activities.length === 0 ? (
           <p className="text-sm text-[var(--color-mid-gray)] italic">
-            No activities yet.
+            No certs yet.
           </p>
         ) : (
           <div className="flex flex-col gap-3">
@@ -126,7 +126,7 @@ export function ActivityResults({
                           setSelectedActivity(activity);
                         }}
                         className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-[var(--color-mid-gray)] bg-[var(--color-off-white)] border border-[rgba(15,37,68,0.12)] rounded px-1.5 py-0.5 hover:border-[rgba(15,37,68,0.25)] hover:text-[var(--color-navy)] transition-colors duration-150"
-                        aria-label="Explain why this activity matches or doesn't match"
+                        aria-label="Explain why this cert matches or doesn't match"
                       >
                         <HelpCircle className="w-3 h-3" />
                         Why?

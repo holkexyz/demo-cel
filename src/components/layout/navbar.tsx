@@ -10,7 +10,7 @@ import Avatar from "@/components/ui/avatar";
 
 const NAV_LINKS = [
   { label: "Tags", href: "/tags" },
-  { label: "Activities", href: "/activities" },
+  { label: "Certs", href: "/certs" },
   { label: "Explorer", href: "/explorer" },
   { label: "Projects", href: "/projects" },
 ];

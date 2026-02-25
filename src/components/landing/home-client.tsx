@@ -16,15 +16,15 @@ const FEATURE_CARDS = [
   },
   {
     icon: Sparkles,
-    title: "Activity Creator",
+    title: "Cert Creator",
     description: "Describe work and let AI suggest tags",
-    buttonLabel: "Create Activity",
-    href: "/activities/new",
+    buttonLabel: "Create Cert",
+    href: "/certs/new",
   },
   {
     icon: Search,
     title: "Explorer",
-    description: "Build rules, match activities, analyze data",
+    description: "Build rules, match certs, analyze data",
     buttonLabel: "Open Explorer",
     href: "/explorer",
   },
@@ -32,7 +32,7 @@ const FEATURE_CARDS = [
 
 const QUICK_START_STEPS = [
   { label: "Seed your tag taxonomy", href: "/tags" },
-  { label: "Create an activity with AI-suggested tags", href: "/activities/new" },
+  { label: "Create a cert with AI-suggested tags", href: "/certs/new" },
   { label: "Explore and match with CEL rules", href: "/explorer" },
 ];
 

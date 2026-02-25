@@ -102,7 +102,7 @@ export function AnalyticsPanel({ activities, availableTags }: AnalyticsPanelProp
     return (
       <div className="bg-white border border-[rgba(15,37,68,0.1)] rounded-lg p-8 text-center">
         <p className="text-sm text-[var(--color-mid-gray)] italic">
-          No activities to analyze
+          No certs to analyze
         </p>
       </div>
     );
@@ -117,7 +117,7 @@ export function AnalyticsPanel({ activities, availableTags }: AnalyticsPanelProp
         </h3>
         {tagFrequency.length === 0 ? (
           <p className="text-sm text-[var(--color-mid-gray)] italic">
-            No tags used in activities.
+            No tags used in certs.
           </p>
         ) : (
           <div className="flex flex-col gap-2">

@@ -124,10 +124,10 @@ function ActivityCreatorForm() {
         },
       });
 
-      router.push("/activities");
+      router.push("/certs");
     } catch (err) {
       setPublishError(
-        err instanceof Error ? err.message : "Failed to publish activity"
+        err instanceof Error ? err.message : "Failed to publish cert"
       );
     } finally {
       setIsPublishing(false);
@@ -147,7 +147,7 @@ function ActivityCreatorForm() {
           {/* Page heading */}
           <div>
             <h1 className="text-2xl font-mono font-bold text-[var(--color-navy)] uppercase tracking-tight">
-              New Activity
+              New Cert
             </h1>
             <p className="text-sm text-[var(--color-mid-gray)] mt-1">
               Describe your work and let AI suggest the right work scope tags.
@@ -248,7 +248,7 @@ function ActivityCreatorForm() {
                 loading={isPublishing}
                 type="button"
               >
-                Publish Activity
+                Publish Cert
               </Button>
             </div>
           </div>

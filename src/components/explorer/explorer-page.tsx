@@ -32,7 +32,7 @@ function ExplorerContent() {
             Work Scope Explorer
           </h1>
           <p className="text-sm text-[var(--color-mid-gray)] mt-1">
-            Build CEL rules to filter and explore activities by work scope.
+            Build CEL rules to filter and explore certs by work scope.
           </p>
         </div>
 
@@ -45,13 +45,13 @@ function ExplorerContent() {
         ) : activities.length === 0 ? (
           <div className="bg-white border border-[rgba(15,37,68,0.1)] rounded-lg p-12 text-center">
             <p className="text-[var(--color-mid-gray)] mb-4">
-              No activities yet. Create some activities first.
+              No certs yet. Create some certs first.
             </p>
             <Link
-              href="/activities/new"
+              href="/certs/new"
               className="inline-flex items-center gap-2 px-4 py-2 rounded bg-[var(--color-accent)] text-white text-sm font-medium hover:bg-[#4e93d8] transition-colors duration-150"
             >
-              Create Activity
+              Create Cert
             </Link>
           </div>
         ) : (

@@ -44,13 +44,13 @@ const ActivityListPageInner: React.FC = () => {
       <div className="app-page__inner">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-h3 font-mono text-navy">Activities</h1>
+          <h1 className="text-h3 font-mono text-navy">Certs</h1>
           <Link
-            href="/activities/new"
+            href="/certs/new"
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-mono text-accent bg-accent/10 border border-accent/20 rounded hover:bg-accent/15 hover:border-accent/35 transition-colors duration-150"
           >
             <Plus className="w-4 h-4" />
-            New Activity
+            New Cert
           </Link>
         </div>
 
@@ -66,13 +66,13 @@ const ActivityListPageInner: React.FC = () => {
         {/* Empty state */}
         {!isLoading && activities.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
-            <p className="text-gray-500 text-sm">No activities yet.</p>
+            <p className="text-gray-500 text-sm">No certs yet.</p>
             <Link
-              href="/activities/new"
+              href="/certs/new"
               className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-mono text-white bg-accent border border-accent rounded hover:bg-accent/90 transition-colors duration-150"
             >
               <Plus className="w-4 h-4" />
-              Create your first activity
+              Create your first cert
             </Link>
           </div>
         )}

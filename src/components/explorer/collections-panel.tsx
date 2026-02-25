@@ -22,14 +22,14 @@ interface DemoCollection {
 const DEMO_COLLECTIONS: DemoCollection[] = [
   {
     name: "Nature-Based Solutions",
-    description: "Activities involving ecosystem restoration",
+    description: "Certs involving ecosystem restoration",
     expression:
       'scope.hasAny(["mangrove_restoration","wetland_restoration","coral_reef_protection","forest_regeneration","grassland_restoration"])',
     accentColor: "#22c55e", // green-500
   },
   {
     name: "Monitoring-Heavy Projects",
-    description: "Activities with strong monitoring components",
+    description: "Certs with strong monitoring components",
     expression:
       'scope.hasAny(["biodiversity_monitoring","remote_sensing","scientific_monitoring","carbon_measurement"])',
     accentColor: "#3b82f6", // blue-500
@@ -43,7 +43,7 @@ const DEMO_COLLECTIONS: DemoCollection[] = [
   },
   {
     name: "Open Data Projects",
-    description: "Activities publishing open data",
+    description: "Certs publishing open data",
     expression: 'scope.has("open_data")',
     accentColor: "#8b5cf6", // violet-500
   },
